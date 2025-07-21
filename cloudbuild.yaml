@@ -1,0 +1,42 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/trotro-ai-service:${BUILD_ID}', '.']
+  
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/trotro-ai-service:${BUILD_ID}']
+  
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+    - 'run'
+    - 'deploy'
+    - 'trotro-ai-service'
+    - '--image'
+    - 'gcr.io/$PROJECT_ID/trotro-ai-service:${BUILD_ID}'
+    - '--region'
+    - 'africa-south1'
+    - '--platform'
+    - 'managed'
+    - '--allow-unauthenticated'
+    - '--port'
+    - '8001'
+    - '--memory'
+    - '4Gi'
+    - '--cpu'
+    - '2'
+    - '--timeout'
+    - '900'
+    - '--max-instances'
+    - '10'
+    - '--set-env-vars'
+    - 'HOST=0.0.0.0,PORT=8001,DATABASE_URL=postgresql://postgres:qF*X[MV[LE0os@/cloudsql/hhhh-365115:africa-south1:trotro/trotro,DEEPSEEK_API_KEY=sk-0ad33e6b96df4866b8c7baabb5983f8d,BACKEND_SERVICE_URL=https://api.trotro.live,LOG_LEVEL=INFO'
+    - '--add-cloudsql-instances'
+    - 'hhhh-365115:africa-south1:trotro'
+
+timeout: '1200s'
+
+images:
+  - 'gcr.io/$PROJECT_ID/trotro-ai-service:${BUILD_ID}'
