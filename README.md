@@ -1,51 +1,86 @@
-# TrotroLive AI System
+# TrotroLive AI Service
 
-Advanced AI-powered question answering system for Ghana's trotro transportation network. This system provides intelligent responses to user queries about routes, fares, stations, and travel planning.
+A robust microservice for AI-powered transportation analytics and predictions. This service provides intelligent insights into Ghana's trotro transportation network through advanced machine learning models and data processing.
 
 ## 🚀 Features
 
 ### Core AI Capabilities
-- **Question Answering**: Natural language processing for transport queries
-- **Route Planning**: Intelligent route recommendations
-- **Fare Estimation**: Dynamic fare calculations
-- **Station Information**: Comprehensive station database
+- **Question Answering**: Advanced NLP for transport queries
+- **Demand Prediction**: Machine learning-based demand forecasting
+- **Route Optimization**: Intelligent route planning
+- **Real-time Analytics**: Live transport data analysis
 - **Multi-language Support**: English and local languages
 
 ### Advanced Features
-- **Fine-tuning**: Custom model training with domain-specific data
-- **Semantic Search**: Advanced embedding-based similarity matching
-- **API Integration**: Deepseek API for enhanced responses
-- **Multi-Channel Platform (MCP)**: WhatsApp, Telegram, Web, and API support
-- **Real-time Learning**: Continuous improvement from user feedback
+- **Automated Data Pipeline**: Real-time data synchronization
+- **Model Versioning**: Track and manage ML model versions
+- **Performance Metrics**: Monitor model accuracy and performance
+- **API Integration**: REST API for external integrations
+- **Real-time Learning**: Continuous model improvement
 
 ### Integration Capabilities
-- **WhatsApp Bot**: Full WhatsApp Business API integration
-- **Telegram Bot**: Telegram messaging support
-- **Web Interface**: Interactive chat interface
-- **REST API**: Developer-friendly API endpoints
-- **Django Integration**: Seamless Django app integration
+- **Backend Integration**: Connects with Trotro backend database
+- **FastAPI Server**: Modern asynchronous API server
+- **Django ORM**: Database integration
+- **WebSocket Support**: Real-time updates
+- **Container Ready**: Docker support
 
 ## 📁 Project Structure
 
 ```
-AI/
-├── enhanced_ai_system.py      # Core AI system with TrotroAI and TrotroMCP classes
-├── whatsapp_integration.py    # WhatsApp Business API integration
-├── ai_qa.py                  # Original Q&A CLI tool
-├── views.py                  # Django views for AI endpoints
-├── urls.py                   # URL patterns for AI app
-├── models/                   # Trained models and exports
-├── requirements.txt          # Python dependencies
-└── README.md                # This file
+AI-Service/
+├── core/
+│   ├── ai_engine.py         # Main AI engine with model management
+│   ├── data_pipeline.py     # Data synchronization and preprocessing
+│   └── models.py           # Model definitions and status tracking
+├── app.py                  # FastAPI application server
+├── views.py               # API endpoints
+├── urls.py               # URL routing
+├── models/              # Trained ML models
+├── requirements.txt    # Python dependencies
+└── README.md          # Documentation
 ```
 
 ## 🔧 Installation & Setup
 
-### 1. Install Dependencies
+### 1. Prerequisites
+- Python 3.8+
+- PostgreSQL database
+- Docker (optional)
+- Deepseek API key (optional)
+- OpenAI API key (optional)
+
+### 2. Environment Setup
+
+Create a `.env` file with the following variables:
+
+```
+# Database Configuration
+DATABASE_URL=postgresql://user:password@localhost/trotro
+
+# API Keys
+DEEPSEEK_API_KEY=your_deepseek_key
+OPENAI_API_KEY=your_openai_key
+
+# Service Configuration
+BACKEND_SERVICE_URL=https://api.trotro.live
+SERVICE_HOST=0.0.0.0
+SERVICE_PORT=8001
+
+# Model Configuration
+MODEL_CACHE_DIR=./models
+EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+MAX_CONTEXT_LENGTH=512
+```
+
+### 3. Install Dependencies
 
 ```bash
-cd AI/
+# Install Python dependencies
 pip install -r requirements.txt
+
+# Install system dependencies
+sudo apt-get install -y postgresql-client
 ```
 
 ### 2. Environment Configuration
