@@ -8,12 +8,6 @@ Enhanced AI System for Trotro Transport
 - WhatsApp chatbot support
 """
 
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'trotrolive_webapp.settings')
-import django
-django.setup()
 
 import pandas as pd
 import torch
@@ -25,7 +19,6 @@ from datetime import datetime
 from typing import List, Dict, Tuple, Optional
 from transformers import AutoTokenizer, AutoModel, BertTokenizer, BertModel
 from sklearn.metrics.pairwise import cosine_similarity
-from stations.models import Station, Route, Trip, Fare
 from difflib import get_close_matches
 import logging
 import random
@@ -34,6 +27,42 @@ from pathlib import Path
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+from dataclasses import dataclass
+
+@dataclass
+class ChatRequest:
+    message: str
+    context: Optional[Dict] = None
+
+@dataclass
+class ChatResponse:
+    response: str
+    confidence: float
+    context: Optional[Dict] = None
+
+@dataclass
+class HealthCheck:
+    status: str
+    timestamp: str
+    version: str
+
+@dataclass
+class TrainingRequest:
+    data: List[Dict]
+    model_type: str
+    parameters: Dict
+
+@dataclass
+class PredictionRequest:
+    features: Dict
+    model_type: str
+
+@dataclass
+class RouteOptimizationRequest:
+    origin: str
+    destination: str
+    constraints: Dict
 
 class TrotroAI:
     """Enhanced AI system for Trotro transportation queries"""
@@ -68,19 +97,13 @@ class TrotroAI:
     def generate_sample_questions(self):
         """Generate sample questions and answers for training"""
         
-        # Load real data from database
-        stations = list(Station.objects.all().values())
-        routes = list(Route.objects.all().values())
-        trips = list(Trip.objects.all().values())
-        fares = list(Fare.objects.all().values())
-        
         # Create sample questions based on real data
         sample_questions = []
         
         # Basic route questions
-        for i, station in enumerate(stations[:50]):  # Limit to prevent too many samples
-            station_name = station['name']
-            city = station['gtfs_source']
+        for i in range(50):  # Limit to prevent too many samples
+            station_name = f"Station {i}"
+            city = "Accra"
             
             # Generate questions for this station
             questions = [

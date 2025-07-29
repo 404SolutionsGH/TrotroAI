@@ -19,9 +19,8 @@ A robust microservice for AI-powered transportation analytics and predictions. T
 - **Real-time Learning**: Continuous model improvement
 
 ### Integration Capabilities
-- **Backend Integration**: Connects with Trotro backend database
+- **REST API Integration**: Connects with Trotro API (api.trotro.live)
 - **FastAPI Server**: Modern asynchronous API server
-- **Django ORM**: Database integration
 - **WebSocket Support**: Real-time updates
 - **Container Ready**: Docker support
 
@@ -45,9 +44,8 @@ AI-Service/
 
 ### 1. Prerequisites
 - Python 3.8+
-- PostgreSQL database
 - Docker (optional)
-- Deepseek API key (optional)
+- API.trotro.live credentials (optional)
 - OpenAI API key (optional)
 
 ### 2. Environment Setup
