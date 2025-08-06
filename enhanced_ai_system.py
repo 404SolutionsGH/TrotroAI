@@ -9,6 +9,7 @@ Enhanced AI System for Trotro Transport
 """
 
 
+import os
 import pandas as pd
 import torch
 import torch.nn as nn
@@ -94,16 +95,72 @@ class TrotroAI:
             self.tokenizer = None
             self.model = None
     
+    def fetch_api_data(self):
+        """Fetch real data from TrotroLive API"""
+        try:
+            # Fetch stations
+            stations_response = requests.get('https://api.trotro.live/api/stations/', timeout=10)
+            stations = stations_response.json() if stations_response.status_code == 200 else []
+            
+            # Fetch routes
+            routes_response = requests.get('https://api.trotro.live/api/routes/', timeout=10)
+            routes = routes_response.json() if routes_response.status_code == 200 else []
+            
+            # Fetch trips
+            trips_response = requests.get('https://api.trotro.live/api/trips/', timeout=10)
+            trips = trips_response.json() if trips_response.status_code == 200 else []
+            
+            # Fetch fares
+            fares_response = requests.get('https://api.trotro.live/api/fares/', timeout=10)
+            fares = fares_response.json() if fares_response.status_code == 200 else []
+            
+            logger.info(f"Fetched {len(stations)} stations, {len(routes)} routes, {len(trips)} trips, {len(fares)} fares")
+            
+            return {
+                'stations': stations,
+                'routes': routes,
+                'trips': trips,
+                'fares': fares
+            }
+            
+        except Exception as e:
+            logger.error(f"Error fetching API data: {e}")
+            # Return sample data as fallback
+            return {
+                'stations': [
+                    {'id': 1, 'name': 'Circle', 'gtfs_source': 'Accra', 'station_address': 'Circle, Accra'},
+                    {'id': 2, 'name': 'Madina', 'gtfs_source': 'Accra', 'station_address': 'Madina, Accra'},
+                    {'id': 3, 'name': 'Kaneshie', 'gtfs_source': 'Accra', 'station_address': 'Kaneshie, Accra'},
+                    {'id': 4, 'name': 'Tema', 'gtfs_source': 'Accra', 'station_address': 'Tema, Greater Accra'},
+                    {'id': 5, 'name': 'Kumasi Central', 'gtfs_source': 'Kumasi', 'station_address': 'Central Market, Kumasi'},
+                ],
+                'routes': [
+                    {'short_name': 'R1', 'long_name': 'Circle to Tema Route', 'source': 'Accra'},
+                    {'short_name': 'R2', 'long_name': 'Madina to Kaneshie Route', 'source': 'Accra'},
+                    {'short_name': 'R3', 'long_name': 'Kumasi Central Route', 'source': 'Kumasi'},
+                ],
+                'trips': [],
+                'fares': []
+            }
+    
     def generate_sample_questions(self):
-        """Generate sample questions and answers for training"""
+        """Generate sample questions and answers for training using real API data"""
+        
+        # Fetch real data from API
+        api_data = self.fetch_api_data()
+        stations = api_data['stations']
+        routes = api_data['routes']
+        trips = api_data['trips']
+        fares = api_data['fares']
         
         # Create sample questions based on real data
         sample_questions = []
         
-        # Basic route questions
-        for i in range(50):  # Limit to prevent too many samples
-            station_name = f"Station {i}"
-            city = "Accra"
+        # Station-specific questions using real data
+        for station in stations[:30]:  # Limit to prevent too many samples
+            station_name = station.get('name', 'Unknown Station')
+            city = station.get('gtfs_source', 'Unknown City')
+            address = station.get('station_address', f'Located in {city}')
             
             # Generate questions for this station
             questions = [
@@ -117,23 +174,23 @@ class TrotroAI:
                 f"Tell me about {station_name} station",
             ]
             
-            # Generate answers
+            # Generate answers using real station data
             answers = [
-                f"To get to {station_name}, you can take a trotro or taxi. It's located at {station.get('station_address', 'address not available')} in {city}.",
-                f"The best route to {station_name} depends on your starting point. It's a {'bus stop' if station.get('is_bus_stop') else 'station'} in {city}.",
-                f"{station_name} is located at {station.get('station_address', 'address not available')} in {city}.",
+                f"To get to {station_name}, you can take a trotro or taxi. It's located at {address} in {city}.",
+                f"The best route to {station_name} depends on your starting point. It's a station in {city}.",
+                f"{station_name} is located at {address} in {city}.",
                 f"The cost to {station_name} varies depending on your starting point. Check current fares for specific routes.",
                 f"You can find stations near {station_name} by checking the {city} transport network.",
-                f"{'Yes' if station.get('is_bus_stop') else 'No'}, {station_name} is {'a bus stop' if station.get('is_bus_stop') else 'a regular station'}.",
+                f"Yes, {station_name} is a station in the transport network.",
                 f"{station_name} is in {city}.",
-                f"{station_name} is a {'bus stop' if station.get('is_bus_stop') else 'station'} located at {station.get('station_address', 'address not available')} in {city}.",
+                f"{station_name} is a station located at {address} in {city}.",
             ]
             
             for q, a in zip(questions, answers):
                 sample_questions.append({
                     'question': q,
                     'answer': a,
-                    'context': f"station:{station_name}, city:{city}",
+                    'context': f"station:{station_name}, city:{city}, address:{address}",
                     'type': 'station_info'
                 })
         
