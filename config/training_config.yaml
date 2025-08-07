@@ -1,0 +1,24 @@
+# Training Configuration
+model_name: "distilbert-base-uncased"
+learning_rate: 2e-5
+batch_size: 16
+epochs: 3
+max_length: 256
+output_dir: "models"
+
+# Data Augmentation
+augment_data: true
+augment_duplicates: 2  # Number of augmented samples per original sample
+
+# Training Schedule
+warmup_steps: 500
+weight_decay: 0.01
+logging_steps: 10
+
+# Model Saving
+save_total_limit: 3  # Maximum number of checkpoints to keep
+save_steps: 500
+
+# Early Stopping
+early_stopping_patience: 3  # Stop after N epochs without improvement
+early_stopping_threshold: 0.01  # Minimum improvement to count as better
