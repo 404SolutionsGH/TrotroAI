@@ -107,3 +107,32 @@ Thumbs.db
 *.db
 *.sqlite
 *.sqlite3
+
+# Dataset files (don't push raw data)
+*.csv
+*.txt
+trotro/
+trotrolive-datasets/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Environment files
+.env
+*.env
+
+# Large files
+*.zip
+*.tar.gz
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Kaggle credentials
+kaggle.json
